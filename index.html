@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fitelo | Internal Support</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app-container">
+
+  <main class="chat-wrapper">
+
+    <div class="chat-header">
+      <div class="header-left">
+        <h2>Support Conversation</h2>
+      </div>
+      <div class="header-right">
+        ID: 200866206
+      </div>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+      <div class="message-row system">
+        <div class="avatar ai">AI</div>
+        <div class="bubble-group">
+          <div class="message system">
+            Hello! I'm your Fitelo Internal Support Assistant. How can I help you today?
+          </div>
+          <div class="timestamp">10:00 AM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input
+        id="userInput"
+        placeholder="Type your message..."
+        onkeydown="handleEnter(event)"
+      />
+      <button onclick="sendMessage()">➤</button>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
