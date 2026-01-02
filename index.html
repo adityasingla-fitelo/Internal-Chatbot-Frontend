@@ -32,14 +32,25 @@
       </div>
     </div>
 
-    <div class="chat-input">
-      <input
-        id="userInput"
-        placeholder="Type your message..."
-        onkeydown="handleEnter(event)"
-      />
-      <button onclick="sendMessage()">➤</button>
-    </div>
+<div class="chat-input">
+
+  <label class="attach-btn">
+    📎
+    <input type="file" id="fileInput" accept="image/*" hidden />
+  </label>
+
+  <input
+    id="userInput"
+    placeholder="Type your message..."
+    onkeydown="handleEnter(event)"
+  />
+
+  <button onclick="sendMessage()">➤</button>
+
+</div>
+
+<div class="file-preview" id="filePreview"></div>
+
 
   </main>
 
