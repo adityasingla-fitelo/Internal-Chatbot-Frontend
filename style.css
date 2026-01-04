@@ -159,12 +159,28 @@ body {
   cursor: pointer;
 }
 
+/* Attachment button wrapper */
 .attach-btn {
-  cursor: pointer;
-  font-size: 18px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
+
+.attach-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.attach-btn:hover .attach-icon {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+
+
+
 
 .file-preview {
   padding: 0 20px 10px;

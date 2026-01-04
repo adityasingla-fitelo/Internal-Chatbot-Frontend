@@ -11,6 +11,7 @@
 
   <main class="chat-wrapper">
 
+    <!-- Header -->
     <div class="chat-header">
       <div class="header-left">
         <h2>Support Conversation</h2>
@@ -20,6 +21,7 @@
       </div>
     </div>
 
+    <!-- Chat messages -->
     <div class="chat-body" id="chatBody">
       <div class="message-row system">
         <div class="avatar ai">AI</div>
@@ -32,25 +34,29 @@
       </div>
     </div>
 
-<div class="chat-input">
+    <!-- Input area -->
+    <div class="chat-input">
 
-  <label class="attach-btn">
-    📎
-    <input type="file" id="fileInput" accept="image/*" hidden />
-  </label>
+      <!-- Attachment button (PUBLIC ASSET) -->
+      <label class="attach-btn" title="Attach screenshot">
+        <img src="attach-icon.png" alt="Attach" class="attach-icon" />
+        <input type="file" id="fileInput" accept="image/*" hidden />
+      </label>
 
-  <input
-    id="userInput"
-    placeholder="Type your message..."
-    onkeydown="handleEnter(event)"
-  />
+      <!-- Text input -->
+      <input
+        id="userInput"
+        placeholder="Type your message..."
+        onkeydown="handleEnter(event)"
+      />
 
-  <button onclick="sendMessage()">➤</button>
+      <!-- Send button -->
+      <button onclick="sendMessage()">➤</button>
 
-</div>
+    </div>
 
-<div class="file-preview" id="filePreview"></div>
-
+    <!-- File preview -->
+    <div class="file-preview" id="filePreview"></div>
 
   </main>
 
