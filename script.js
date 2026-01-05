@@ -1,5 +1,6 @@
 const sessionId = crypto.randomUUID();
-
+const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
+// const BACKEND_URL = "https:127.0.0.1:8000/chat";
 function handleEnter(event) {
   if (event.key === "Enter") {
     sendMessage();
@@ -35,16 +36,17 @@ async function sendMessage() {
   chatBody.scrollTop = chatBody.scrollHeight;
 
   // ---- BACKEND CALL ----
-  const response = await fetch(
-    "https://internal-chatbot-backend-1.onrender.com/chat",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({ message: text })
-    }
-  );
+const response = await fetch(BACKEND_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: new URLSearchParams({
+    session_id: sessionId,
+    message: text
+  })
+});
+
 
 //     const response = await fetch("http://127.0.0.1:8000/chat", {
 //   method: "POST",
