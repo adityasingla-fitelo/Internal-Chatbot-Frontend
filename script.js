@@ -1,8 +1,8 @@
 // Generate one session per browser tab
 const sessionId = crypto.randomUUID();
 
-// const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
-const BACKEND_URL = "http://127.0.0.1:8000/chat";
+const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
+//const BACKEND_URL = "http://127.0.0.1:8000/chat";
 
 function handleEnter(event) {
   if (event.key === "Enter") {
