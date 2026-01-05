@@ -1,6 +1,12 @@
+// Generate one session per browser tab
 const sessionId = crypto.randomUUID();
-const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
-// const BACKEND_URL = "https:127.0.0.1:8000/chat";
+
+// 🔁 Switch automatically based on environment
+const BACKEND_URL =
+  window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000/chat"
+    : "https://internal-chatbot-backend-1.onrender.com/chat";
+
 function handleEnter(event) {
   if (event.key === "Enter") {
     sendMessage();
@@ -22,7 +28,6 @@ async function sendMessage() {
   // ---- USER MESSAGE ----
   const userRow = document.createElement("div");
   userRow.className = "message-row user";
-
   userRow.innerHTML = `
     <div class="avatar user">You</div>
     <div class="bubble-group">
@@ -30,51 +35,39 @@ async function sendMessage() {
       <div class="timestamp">${getTime()}</div>
     </div>
   `;
-
   chatBody.appendChild(userRow);
   input.value = "";
   chatBody.scrollTop = chatBody.scrollHeight;
 
   // ---- BACKEND CALL ----
-const response = await fetch(BACKEND_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: new URLSearchParams({
-    session_id: sessionId,
-    message: text
-  })
-});
+  let data;
+  try {
+    const response = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        session_id: sessionId,
+        message: text,
+      }),
+    });
 
-
-//     const response = await fetch("http://127.0.0.1:8000/chat", {
-//   method: "POST",
-//   headers: {
-//     "Content-Type": "application/x-www-form-urlencoded"
-//   },
-//   body: new URLSearchParams({
-//   session_id: sessionId,
-//   message: text})
-// });
-
-
-  const data = await response.json();
+    data = await response.json();
+  } catch (err) {
+    data = { reply: "Sorry, unable to connect to the server." };
+  }
 
   // ---- SYSTEM MESSAGE ----
   const systemRow = document.createElement("div");
   systemRow.className = "message-row system";
-
   systemRow.innerHTML = `
     <div class="avatar ai">AI</div>
     <div class="bubble-group">
-      <div class="message system">
-        ${data.reply}
-      </div>
+      <div class="message system">${data.reply}</div>
       <div class="timestamp">${getTime()}</div>
     </div>
   `;
-
   chatBody.appendChild(systemRow);
   chatBody.scrollTop = chatBody.scrollHeight;
 }

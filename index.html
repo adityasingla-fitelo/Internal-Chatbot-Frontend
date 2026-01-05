@@ -8,7 +8,6 @@
 <body>
 
 <div class="app-container">
-
   <main class="chat-wrapper">
 
     <!-- Header -->
@@ -27,7 +26,8 @@
         <div class="avatar ai">AI</div>
         <div class="bubble-group">
           <div class="message system">
-            Hello! I'm your Fitelo Internal Support Assistant. How can I help you today?
+            Hello! I'm your Fitelo Internal Support Assistant.
+            How can I help you today?
           </div>
           <div class="timestamp">10:00 AM</div>
         </div>
@@ -39,7 +39,8 @@
 
       <!-- Attachment button (PUBLIC ASSET) -->
       <label class="attach-btn" title="Attach screenshot">
-        <img src="attach-icon.png" alt="Attach" class="attach-icon" />
+        <!-- MUST exist at root or /public -->
+        <img src="/attach-icon.png" alt="Attach" class="attach-icon" />
         <input type="file" id="fileInput" accept="image/*" hidden />
       </label>
 
@@ -59,7 +60,6 @@
     <div class="file-preview" id="filePreview"></div>
 
   </main>
-
 </div>
 
 <script src="script.js"></script>
