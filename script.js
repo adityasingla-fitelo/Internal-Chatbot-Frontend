@@ -1,8 +1,8 @@
 // Generate one session per browser tab
 const sessionId = crypto.randomUUID();
 
-const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
-//const BACKEND_URL = "http://127.0.0.1:8000/chat";
+// const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
+const BACKEND_URL = "http://127.0.0.1:8000/chat";
 
 function handleEnter(event) {
   if (event.key === "Enter") {
@@ -129,5 +129,56 @@ function renderCalendar(chatBody) {
 
     calendarRow.remove();
     sendMessageWithOverride(`${start}|${end}`);
+  };
+}
+
+if (data.stage === "ask_dates") {
+  renderCalendar(chatBody);           
+}
+
+if (data.stage === "ask_single_date") {
+  renderSingleDateCalendar(chatBody); 
+}
+
+function renderSingleDateCalendar(chatBody) {
+  if (document.getElementById("calendarRow")) return;
+
+  const calendarRow = document.createElement("div");
+  calendarRow.className = "message-row system";
+  calendarRow.id = "calendarRow";
+
+  calendarRow.innerHTML = `
+    <div class="avatar ai">AI</div>
+    <div class="bubble-group">
+      <div class="message system">
+        <div class="calendar-container">
+          <label>
+            Select New Start Date:
+            <input type="date" id="singleDate" />
+          </label>
+
+          <div style="margin-top:12px;">
+            <button class="calendar-confirm-btn" id="confirmSingleDate">
+              Confirm Date
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  chatBody.appendChild(calendarRow);
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  document.getElementById("confirmSingleDate").onclick = () => {
+    const date = document.getElementById("singleDate").value;
+
+    if (!date) {
+      alert("Please select a date");
+      return;
+    }
+
+    calendarRow.remove();
+    sendMessage(date);
   };
 }

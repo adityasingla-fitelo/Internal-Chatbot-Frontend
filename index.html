@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fitelo | Internal Support</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -9,10 +10,10 @@
 
 <div class="app-container">
   <main class="chat-wrapper">
-
     <!-- Header -->
     <div class="chat-header">
       <div class="header-left">
+        <img src="Logo.png" alt="Fitelo" class="logo" />
         <h2>Support Conversation</h2>
       </div>
       <div class="header-right">
@@ -25,10 +26,8 @@
       <div class="message-row system">
         <div class="avatar ai">AI</div>
         <div class="bubble-group">
-          <div class="message system">
-            Hello! I'm your Fitelo Internal Support Assistant.
-            How can I help you today?
-          </div>
+          <div class="message system">Hello! I'm your Fitelo Internal Support Assistant.
+            How can I help you today?</div>
           <div class="timestamp">10:00 AM</div>
         </div>
       </div>
@@ -36,10 +35,8 @@
 
     <!-- Input area -->
     <div class="chat-input">
-
-      <!-- Attachment button (PUBLIC ASSET) -->
+      <!-- Attachment button -->
       <label class="attach-btn" title="Attach screenshot">
-        <!-- MUST exist at root or /public -->
         <img src="/attach-icon.png" alt="Attach" class="attach-icon" />
         <input type="file" id="fileInput" accept="image/*" hidden />
       </label>
@@ -53,12 +50,10 @@
 
       <!-- Send button -->
       <button onclick="sendMessage()">➤</button>
-
     </div>
 
     <!-- File preview -->
     <div class="file-preview" id="filePreview"></div>
-
   </main>
 </div>
 
