@@ -328,3 +328,22 @@ body {
 .chat-body::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+.image-bubble {
+  padding: 6px;
+  background: #ff7a33;
+}
+
+.chat-image {
+  width: 220px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: block;
+}
+
+.file-name {
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: center;
+  opacity: 0.9;
+}

@@ -1,19 +1,20 @@
-// Generate one session per browser tab
 const sessionId = crypto.randomUUID();
 
-// const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
+// BACKEND
 const BACKEND_URL = "http://127.0.0.1:8000/chat";
+// const BACKEND_URL = "https://internal-chatbot-backend-1.onrender.com/chat";
 
-function handleEnter(event) {
-  if (event.key === "Enter") {
-    sendMessage();
-  }
+/* ---------------- UTILS ---------------- */
+
+function handleEnter(e) {
+  if (e.key === "Enter") sendMessage();
 }
 
 function getTime() {
-  const now = new Date();
-  return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
+/* ---------------- CORE SEND ---------------- */
 
 async function sendMessage(overrideText = null) {
   const input = document.getElementById("userInput");
@@ -22,163 +23,179 @@ async function sendMessage(overrideText = null) {
   const text = overrideText ?? input.value.trim();
   if (!text) return;
 
-  // ---- USER MESSAGE (skip if override) ----
-  if (!overrideText) {
-    const userRow = document.createElement("div");
-    userRow.className = "message-row user";
-    userRow.innerHTML = `
-      <div class="avatar user">You</div>
-      <div class="bubble-group">
-        <div class="message user">${text}</div>
-        <div class="timestamp">${getTime()}</div>
-      </div>
-    `;
-    chatBody.appendChild(userRow);
+  // User text bubble (not for file refs)
+  if (!overrideText || !overrideText.startsWith("FILE_REF::")) {
+    appendUserMessage(text);
   }
 
   input.value = "";
-  chatBody.scrollTop = chatBody.scrollHeight;
 
-  // ---- BACKEND CALL ----
   let data;
   try {
-    const response = await fetch(BACKEND_URL, {
+    const res = await fetch(BACKEND_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         session_id: sessionId,
         message: text,
       }),
     });
-
-    data = await response.json();
-  } catch (err) {
-    data = { reply: "Sorry, unable to connect to the server." };
+    data = await res.json();
+  } catch {
+    data = { reply: "Server connection failed." };
   }
 
-  // ---- SYSTEM MESSAGE ----
-  const systemRow = document.createElement("div");
-  systemRow.className = "message-row system";
-  systemRow.innerHTML = `
-    <div class="avatar ai">AI</div>
+  appendSystemMessage(data.reply);
+
+  // Calendar hooks
+  if (data.stage === "ask_dates") renderDateRangeCalendar();
+  if (data.stage === "ask_single_date") renderSingleDateCalendar();
+}
+
+/* ---------------- MESSAGE UI ---------------- */
+
+function appendUserMessage(text) {
+  const chatBody = document.getElementById("chatBody");
+
+  const row = document.createElement("div");
+  row.className = "message-row user";
+  row.innerHTML = `
+    <div class="avatar user">You</div>
     <div class="bubble-group">
-      <div class="message system">${data.reply}</div>
+      <div class="message user">${text}</div>
       <div class="timestamp">${getTime()}</div>
     </div>
   `;
-  chatBody.appendChild(systemRow);
+  chatBody.appendChild(row);
   chatBody.scrollTop = chatBody.scrollHeight;
-
-  // ---- RENDER CALENDAR INSIDE CHAT ----
-  if (data.stage === "ask_dates") {
-    renderCalendar(chatBody);
-  }
 }
 
-// Helper to send calendar dates without showing user bubble
-function sendMessageWithOverride(text) {
-  sendMessage(text);
+function appendSystemMessage(text) {
+  const chatBody = document.getElementById("chatBody");
+
+  const row = document.createElement("div");
+  row.className = "message-row system";
+  row.innerHTML = `
+    <div class="avatar ai">AI</div>
+    <div class="bubble-group">
+      <div class="message system">${text}</div>
+      <div class="timestamp">${getTime()}</div>
+    </div>
+  `;
+  chatBody.appendChild(row);
+  chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-function renderCalendar(chatBody) {
-  // Prevent duplicate calendars
+/* ---------------- FILE UPLOAD ---------------- */
+
+document.getElementById("fileInput").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  renderFilePreview(file);
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("http://127.0.0.1:8000/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  // 🔥 IMPORTANT: immediately advance workflow
+  sendMessage(`FILE_REF::${data.file_path}`);
+
+  // reset picker
+  e.target.value = "";
+});
+
+/* ---------------- PREVIEW ---------------- */
+
+function renderFilePreview(file) {
+  const chatBody = document.getElementById("chatBody");
+  const imgURL = URL.createObjectURL(file);
+
+  const row = document.createElement("div");
+  row.className = "message-row user";
+
+  row.innerHTML = `
+    <div class="avatar user">You</div>
+    <div class="bubble-group">
+      <div class="message user image-bubble">
+        <img src="${imgURL}" class="chat-image"
+             onclick="window.open('${imgURL}', '_blank')" />
+        <div class="file-name">${file.name}</div>
+      </div>
+      <div class="timestamp">${getTime()}</div>
+    </div>
+  `;
+
+  chatBody.appendChild(row);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+/* ---------------- CALENDARS ---------------- */
+
+function renderDateRangeCalendar() {
   if (document.getElementById("calendarRow")) return;
 
-  const calendarRow = document.createElement("div");
-  calendarRow.className = "message-row system";
-  calendarRow.id = "calendarRow";
+  const chatBody = document.getElementById("chatBody");
+  const row = document.createElement("div");
+  row.id = "calendarRow";
+  row.className = "message-row system";
 
-  calendarRow.innerHTML = `
+  row.innerHTML = `
     <div class="avatar ai">AI</div>
     <div class="bubble-group">
       <div class="message system">
-        <div class="calendar-container">
-          <label>
-            Start Date:
-            <input type="date" id="startDate" />
-          </label>
-
-          <label style="margin-top:8px;">
-            End Date:
-            <input type="date" id="endDate" />
-          </label>
-
-          <div style="margin-top:12px;">
-            <button class="calendar-confirm-btn" id="confirmDates">
-              Confirm Dates
-            </button>
-          </div>
-        </div>
+        <label>Start Date</label><br/>
+        <input type="date" id="startDate"/><br/><br/>
+        <label>End Date</label><br/>
+        <input type="date" id="endDate"/><br/><br/>
+        <button onclick="confirmRange()">Confirm Dates</button>
       </div>
     </div>
   `;
 
-  chatBody.appendChild(calendarRow);
-  chatBody.scrollTop = chatBody.scrollHeight;
-
-  document.getElementById("confirmDates").onclick = () => {
-    const start = document.getElementById("startDate").value;
-    const end = document.getElementById("endDate").value;
-
-    if (!start || !end) {
-      alert("Please select both start and end date");
-      return;
-    }
-
-    calendarRow.remove();
-    sendMessageWithOverride(`${start}|${end}`);
-  };
+  chatBody.appendChild(row);
 }
 
-if (data.stage === "ask_dates") {
-  renderCalendar(chatBody);           
+function confirmRange() {
+  const s = document.getElementById("startDate").value;
+  const e = document.getElementById("endDate").value;
+  if (!s || !e) return alert("Select both dates");
+
+  document.getElementById("calendarRow").remove();
+  sendMessage(`${s}|${e}`);
 }
 
-if (data.stage === "ask_single_date") {
-  renderSingleDateCalendar(chatBody); 
-}
-
-function renderSingleDateCalendar(chatBody) {
+function renderSingleDateCalendar() {
   if (document.getElementById("calendarRow")) return;
 
-  const calendarRow = document.createElement("div");
-  calendarRow.className = "message-row system";
-  calendarRow.id = "calendarRow";
+  const chatBody = document.getElementById("chatBody");
+  const row = document.createElement("div");
+  row.id = "calendarRow";
+  row.className = "message-row system";
 
-  calendarRow.innerHTML = `
+  row.innerHTML = `
     <div class="avatar ai">AI</div>
     <div class="bubble-group">
       <div class="message system">
-        <div class="calendar-container">
-          <label>
-            Select New Start Date:
-            <input type="date" id="singleDate" />
-          </label>
-
-          <div style="margin-top:12px;">
-            <button class="calendar-confirm-btn" id="confirmSingleDate">
-              Confirm Date
-            </button>
-          </div>
-        </div>
+        <input type="date" id="singleDate"/>
+        <button onclick="confirmSingle()">Confirm</button>
       </div>
     </div>
   `;
 
-  chatBody.appendChild(calendarRow);
-  chatBody.scrollTop = chatBody.scrollHeight;
+  chatBody.appendChild(row);
+}
 
-  document.getElementById("confirmSingleDate").onclick = () => {
-    const date = document.getElementById("singleDate").value;
+function confirmSingle() {
+  const d = document.getElementById("singleDate").value;
+  if (!d) return alert("Select date");
 
-    if (!date) {
-      alert("Please select a date");
-      return;
-    }
-
-    calendarRow.remove();
-    sendMessage(date);
-  };
+  document.getElementById("calendarRow").remove();
+  sendMessage(d);
 }
