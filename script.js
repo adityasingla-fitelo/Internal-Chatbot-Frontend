@@ -2,7 +2,7 @@
 // BACKEND CONFIGURATION
 // =====================================
 
-// ✅ PRODUCTION (Render) — UPDATE THIS URL IF RENDER CHANGES
+// ✅ PRODUCTION (Render)
 const BACKEND_BASE_URL = "https://internal-chatbot-backend-1.onrender.com";
 
 // ✅ LOCAL TESTING (uncomment when needed)
@@ -45,11 +45,11 @@ function renderUserMessage(text) {
   row.className = "message-row user";
 
   row.innerHTML = `
-    <div class="bubble-group right">
+    <div class="avatar user">You</div>
+    <div class="bubble-group">
       <div class="message user">${text}</div>
       <div class="timestamp">${getTime()}</div>
     </div>
-    <div class="avatar you">You</div>
   `;
 
   chatBody.appendChild(row);
@@ -76,7 +76,7 @@ function renderBotMessage(text) {
 }
 
 // =====================================
-// IMAGE MESSAGE (WHATSAPP STYLE)
+// IMAGE MESSAGE (WHATSAPP STYLE – FIXED)
 // =====================================
 function renderImageMessage(file) {
   const previewUrl = URL.createObjectURL(file);
@@ -85,7 +85,8 @@ function renderImageMessage(file) {
   row.className = "message-row user";
 
   row.innerHTML = `
-    <div class="bubble-group right image-bubble">
+    <div class="avatar user">You</div>
+    <div class="bubble-group image-bubble">
       <img
         src="${previewUrl}"
         class="chat-image"
@@ -94,7 +95,6 @@ function renderImageMessage(file) {
       <div class="file-name">${file.name}</div>
       <div class="timestamp">${getTime()}</div>
     </div>
-    <div class="avatar you">You</div>
   `;
 
   chatBody.appendChild(row);
