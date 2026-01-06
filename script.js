@@ -2,10 +2,10 @@
 // BACKEND CONFIGURATION
 // =====================================
 
-// 👉 Production (Render)
+// ✅ PRODUCTION (Render) — UPDATE THIS URL IF RENDER CHANGES
 const BACKEND_BASE_URL = "https://internal-chatbot-backend-1.onrender.com";
 
-// 👉 Local testing (uncomment when needed)
+// ✅ LOCAL TESTING (uncomment when needed)
 // const BACKEND_BASE_URL = "http://127.0.0.1:8000";
 
 const CHAT_URL = `${BACKEND_BASE_URL}/chat`;
@@ -17,7 +17,7 @@ const UPLOAD_URL = `${BACKEND_BASE_URL}/upload`;
 const sessionId = crypto.randomUUID();
 
 // =====================================
-// DOM ELEMENTS
+// DOM REFERENCES
 // =====================================
 const chatBody = document.getElementById("chatBody");
 const userInput = document.getElementById("userInput");
@@ -30,13 +30,15 @@ function scrollToBottom() {
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-function getCurrentTime() {
-  const now = new Date();
-  return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+function getTime() {
+  return new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 // =====================================
-// MESSAGE RENDERING
+// USER MESSAGE (RIGHT SIDE – FIXED)
 // =====================================
 function renderUserMessage(text) {
   const row = document.createElement("div");
@@ -45,7 +47,7 @@ function renderUserMessage(text) {
   row.innerHTML = `
     <div class="bubble-group right">
       <div class="message user">${text}</div>
-      <div class="timestamp">${getCurrentTime()}</div>
+      <div class="timestamp">${getTime()}</div>
     </div>
     <div class="avatar you">You</div>
   `;
@@ -54,6 +56,9 @@ function renderUserMessage(text) {
   scrollToBottom();
 }
 
+// =====================================
+// BOT MESSAGE (LEFT SIDE)
+// =====================================
 function renderBotMessage(text) {
   const row = document.createElement("div");
   row.className = "message-row system";
@@ -62,7 +67,7 @@ function renderBotMessage(text) {
     <div class="avatar ai">AI</div>
     <div class="bubble-group">
       <div class="message system">${text}</div>
-      <div class="timestamp">${getCurrentTime()}</div>
+      <div class="timestamp">${getTime()}</div>
     </div>
   `;
 
@@ -74,20 +79,20 @@ function renderBotMessage(text) {
 // IMAGE MESSAGE (WHATSAPP STYLE)
 // =====================================
 function renderImageMessage(file) {
-  const url = URL.createObjectURL(file);
+  const previewUrl = URL.createObjectURL(file);
 
   const row = document.createElement("div");
   row.className = "message-row user";
 
   row.innerHTML = `
     <div class="bubble-group right image-bubble">
-      <img 
-        src="${url}" 
-        class="chat-image" 
-        onclick="window.open('${url}', '_blank')" 
+      <img
+        src="${previewUrl}"
+        class="chat-image"
+        onclick="window.open('${previewUrl}', '_blank')"
       />
       <div class="file-name">${file.name}</div>
-      <div class="timestamp">${getCurrentTime()}</div>
+      <div class="timestamp">${getTime()}</div>
     </div>
     <div class="avatar you">You</div>
   `;
@@ -97,13 +102,13 @@ function renderImageMessage(file) {
 }
 
 // =====================================
-// SEND MESSAGE
+// SEND TEXT MESSAGE
 // =====================================
-async function sendMessage(overrideText = null) {
-  const message = overrideText ?? userInput.value.trim();
+async function sendMessage(overrideMessage = null) {
+  const message = overrideMessage ?? userInput.value.trim();
   if (!message) return;
 
-  if (!overrideText) {
+  if (!overrideMessage) {
     renderUserMessage(message);
     userInput.value = "";
   }
@@ -120,11 +125,11 @@ async function sendMessage(overrideText = null) {
       }),
     });
 
-    const data = await response.json();
+    if (!response.ok) throw new Error("Server error");
 
-    if (data.reply) {
-      renderBotMessage(data.reply);
-    }
+    const data = await response.json();
+    renderBotMessage(data.reply);
+
   } catch (err) {
     renderBotMessage("Unable to connect to the server. Please try again.");
   }
@@ -158,14 +163,16 @@ fileInput.addEventListener("change", async (event) => {
       body: formData,
     });
 
+    if (!response.ok) throw new Error("Upload failed");
+
     const data = await response.json();
 
-    // 🔥 This advances the backend workflow
+    // Advance backend workflow
     sendMessage(`FILE_REF::${data.file_path}`);
-  } catch (error) {
+
+  } catch (err) {
     renderBotMessage("File upload failed. Please try again.");
   }
 
-  // Reset file input
   fileInput.value = "";
 });
