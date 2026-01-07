@@ -1,36 +1,30 @@
-const API_URL = "http://127.0.0.1:8000/approvals";
-const UPDATE_URL = "http://127.0.0.1:8000/approvals/update";
+const API_URL = "https://internal-chatbot-backend.onrender.com/approvals";
+const UPDATE_URL = "https://internal-chatbot-backend.onrender.com/approvals/update";
 
-// =====================================
-// FETCH APPROVALS
-// =====================================
 async function fetchApprovals() {
   const res = await fetch(API_URL);
   return await res.json();
 }
 
-// =====================================
-// RENDER APPROVAL TABLE
-// =====================================
 async function renderApprovals() {
   const approvals = await fetchApprovals();
   const tbody = document.querySelector("tbody");
   tbody.innerHTML = "";
 
   approvals.forEach(item => {
-    const row = document.createElement("tr");
-
-    // 🔥 Conditional formatting by intent type
     let requestTypeText = item.request_type;
 
+    // 🔥 Add Pause Days formatting
     if (item.request_type === "Add Pause Days") {
       requestTypeText = `${item.request_type} : ${item.pause_days_requested} Days`;
     }
 
+    // 🔥 Transfer Plan formatting
     if (item.request_type === "Transfer Plan") {
       requestTypeText = `${item.request_type} : ${item.requested_plan}`;
     }
 
+    const row = document.createElement("tr");
     row.innerHTML = `
       <td>${item.client_name}</td>
       <td>${item.contact}</td>
@@ -38,9 +32,7 @@ async function renderApprovals() {
       <td>${item.order_by}</td>
       <td>${item.approval_owner}</td>
       <td>
-        <span class="status ${item.status.toLowerCase()}">
-          ${item.status}
-        </span>
+        <span class="status ${item.status.toLowerCase()}">${item.status}</span>
       </td>
       <td class="notes">${item.reason}</td>
       <td>
@@ -51,37 +43,24 @@ async function renderApprovals() {
         </select>
       </td>
     `;
-
     tbody.appendChild(row);
   });
 }
 
-// =====================================
-// APPROVE / REJECT ACTION
-// =====================================
 async function handleAction(id, action) {
   if (!action) return;
 
   const remark = prompt(
-    action === "Approved"
-      ? "Approval remark:"
-      : "Rejection remark:"
+    action === "Approved" ? "Approval remark:" : "Rejection remark:"
   );
 
   await fetch(UPDATE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id,
-      status: action,
-      remarks: remark || ""
-    })
+    body: JSON.stringify({ id, status: action, remarks: remark || "" })
   });
 
   await renderApprovals();
 }
 
-// =====================================
-// INIT
-// =====================================
 document.addEventListener("DOMContentLoaded", renderApprovals);
