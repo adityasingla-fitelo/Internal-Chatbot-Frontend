@@ -2,8 +2,8 @@
 // BACKEND CONFIGURATION
 // =====================================
 
-// const BACKEND_BASE_URL = "https://internal-chatbot-backend-1.onrender.com";
-const BACKEND_BASE_URL = "http://127.0.0.1:8000";
+const BACKEND_BASE_URL = "https://internal-chatbot-backend-1.onrender.com";
+//const BACKEND_BASE_URL = "http://127.0.0.1:8000";
 
 const CHAT_URL = `${BACKEND_BASE_URL}/chat`;
 const UPLOAD_URL = `${BACKEND_BASE_URL}/upload`;
