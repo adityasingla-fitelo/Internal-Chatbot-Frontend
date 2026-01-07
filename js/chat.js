@@ -2,8 +2,8 @@
 // BACKEND CONFIGURATION
 // =====================================
 
-const BACKEND_BASE_URL = "https://internal-chatbot-backend-1.onrender.com";
-//const BACKEND_BASE_URL = "http://127.0.0.1:8000";
+// const BACKEND_BASE_URL = "https://internal-chatbot-backend-1.onrender.com";
+const BACKEND_BASE_URL = "http://127.0.0.1:8000";
 
 const CHAT_URL = `${BACKEND_BASE_URL}/chat`;
 const UPLOAD_URL = `${BACKEND_BASE_URL}/upload`;
@@ -35,7 +35,7 @@ function getTime() {
 }
 
 // =====================================
-// USER MESSAGE (RIGHT SIDE – FIXED)
+// USER MESSAGE
 // =====================================
 function renderUserMessage(text) {
   const row = document.createElement("div");
@@ -54,7 +54,7 @@ function renderUserMessage(text) {
 }
 
 // =====================================
-// BOT MESSAGE (LEFT SIDE)
+// BOT MESSAGE
 // =====================================
 function renderBotMessage(text) {
   const row = document.createElement("div");
@@ -73,24 +73,88 @@ function renderBotMessage(text) {
 }
 
 // =====================================
-// IMAGE MESSAGE (WHATSAPP STYLE – FIXED)
+// SINGLE DATE CALENDAR (Change Start Date)
 // =====================================
-function renderImageMessage(file) {
-  const previewUrl = URL.createObjectURL(file);
-
+function renderSingleDateCalendar() {
   const row = document.createElement("div");
-  row.className = "message-row user";
+  row.className = "message-row system";
 
   row.innerHTML = `
-    <div class="avatar user">You</div>
-    <div class="bubble-group image-bubble">
-      <img
-        src="${previewUrl}"
-        class="chat-image"
-        onclick="window.open('${previewUrl}', '_blank')"
-      />
-      <div class="file-name">${file.name}</div>
-      <div class="timestamp">${getTime()}</div>
+    <div class="avatar ai">AI</div>
+    <div class="bubble-group calendar-container">
+      <input type="date" class="chat-calendar" />
+      <button class="calendar-confirm-btn">Confirm</button>
+    </div>
+  `;
+
+  chatBody.appendChild(row);
+  scrollToBottom();
+
+  const input = row.querySelector("input");
+  const btn = row.querySelector("button");
+
+  btn.onclick = () => {
+    if (!input.value) {
+      alert("Please select a date");
+      return;
+    }
+
+    sendMessage(input.value);
+    row.remove();
+  };
+}
+
+// =====================================
+// DATE RANGE CALENDAR (Pause Facility)
+// =====================================
+function renderDateRangeCalendar() {
+  const row = document.createElement("div");
+  row.className = "message-row system";
+
+  row.innerHTML = `
+    <div class="avatar ai">AI</div>
+    <div class="bubble-group calendar-container">
+      <label>Start</label>
+      <input type="date" class="chat-calendar start" />
+
+      <label>End</label>
+      <input type="date" class="chat-calendar end" />
+
+      <button class="calendar-confirm-btn">Confirm</button>
+    </div>
+  `;
+
+  chatBody.appendChild(row);
+  scrollToBottom();
+
+  const start = row.querySelector(".start");
+  const end = row.querySelector(".end");
+  const btn = row.querySelector("button");
+
+  btn.onclick = () => {
+    if (!start.value || !end.value) {
+      alert("Please select both dates");
+      return;
+    }
+
+    sendMessage(`${start.value}|${end.value}`);
+    row.remove();
+  };
+}
+
+// =====================================
+// APPROVAL STATUS BUTTON
+// =====================================
+function renderApprovalStatusButton() {
+  const row = document.createElement("div");
+  row.className = "message-row system";
+
+  row.innerHTML = `
+    <div class="avatar ai">AI</div>
+    <div class="bubble-group">
+      <button class="approval-btn" onclick="window.open('/approvals.html','_blank')">
+        Check Approval Status
+      </button>
     </div>
   `;
 
@@ -99,7 +163,7 @@ function renderImageMessage(file) {
 }
 
 // =====================================
-// SEND TEXT MESSAGE
+// SEND MESSAGE (🔥 FIXED CORE LOGIC)
 // =====================================
 async function sendMessage(overrideMessage = null) {
   const message = overrideMessage ?? userInput.value.trim();
@@ -113,21 +177,36 @@ async function sendMessage(overrideMessage = null) {
   try {
     const response = await fetch(CHAT_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         session_id: sessionId,
-        message: message,
+        message,
       }),
     });
 
-    if (!response.ok) throw new Error("Server error");
+    if (!response.ok) throw new Error();
 
     const data = await response.json();
+
+    // 🔥 IMPORTANT: UI-ONLY STAGES DO NOT RENDER TEXT
+    if (data.stage === "ask_single_date") {
+      renderSingleDateCalendar();
+      return;
+    }
+
+    if (data.stage === "ask_dates") {
+      renderDateRangeCalendar();
+      return;
+    }
+
+    // ✅ NORMAL TEXT FLOW
     renderBotMessage(data.reply);
 
-  } catch (err) {
+    if (data.stage === "show_approval_status_button") {
+      renderApprovalStatusButton();
+    }
+
+  } catch {
     renderBotMessage("Unable to connect to the server. Please try again.");
   }
 }
@@ -148,9 +227,6 @@ fileInput.addEventListener("change", async (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
-  // Show preview immediately
-  renderImageMessage(file);
-
   const formData = new FormData();
   formData.append("file", file);
 
@@ -160,14 +236,12 @@ fileInput.addEventListener("change", async (event) => {
       body: formData,
     });
 
-    if (!response.ok) throw new Error("Upload failed");
+    if (!response.ok) throw new Error();
 
     const data = await response.json();
-
-    // Advance backend workflow
     sendMessage(`FILE_REF::${data.file_path}`);
 
-  } catch (err) {
+  } catch {
     renderBotMessage("File upload failed. Please try again.");
   }
 

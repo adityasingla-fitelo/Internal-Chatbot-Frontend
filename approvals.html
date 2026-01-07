@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fitelo | Approvals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ✅ Separate CSS -->
+  <link rel="stylesheet" href="./css/approvals.css" />
+</head>
+
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <div class="topbar">
+  <img src="./Logo.png" alt="Fitelo" class="logo" />
+  <span class="avatar">A</span>
+  </div>
+
+
+  <!-- ===== CONTENT ===== -->
+  <div class="container">
+    <h2>Approvals</h2>
+
+    <div class="table-wrapper">
+      <table id="approvalsTable">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Contact</th>
+            <th>Request Type</th>
+            <th>Order By</th>
+            <th>Approval Owner</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- 🔥 Sample row (will be dynamic later) -->
+          <tr data-request-id="1">
+            <td>Aditya</td>
+            <td>+91XXXXXXXXXX</td>
+            <td>Change of Start Date</td>
+            <td>Abhishek</td>
+            <td>Aayush</td>
+            <td>
+              <span class="status pending">Pending</span>
+            </td>
+            <td class="notes">
+              Client requested to postpone plan start date.
+            </td>
+            <td>
+              <select onchange="handleApprovalAction(this)">
+                <option value="">Select</option>
+                <option value="approved">Approve</option>
+                <option value="rejected">Reject</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ✅ JS (MUST be here) -->
+  <script src="./js/approvals.js"></script>
+
+</body>
+</html>

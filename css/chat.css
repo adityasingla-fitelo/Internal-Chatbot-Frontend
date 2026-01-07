@@ -1,0 +1,247 @@
+/* ========== RESET ========== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f5f5f5;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ========== LAYOUT ========== */
+.app-container {
+  height: 100vh;
+  max-width: 1600px;
+  margin: 0 auto;
+  background: white;
+}
+
+.chat-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ========== HEADER ========== */
+.chat-header {
+  padding: 20px 32px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  height: 60px;
+}
+
+.header-left h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.header-right {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ========== CHAT BODY ========== */
+.chat-body {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+  background: #fafafa;
+}
+
+/* ========== MESSAGE ROW ========== */
+.message-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+/* Avatars */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 12px;
+}
+
+.avatar.ai {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.avatar.user {
+  background: #ff6b35;
+  color: white;
+}
+
+/* Bubble group */
+.bubble-group {
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Message bubble */
+.message {
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.message.system {
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+.message.user {
+  background: #ff6b35;
+  color: white;
+}
+
+/* Timestamp */
+.timestamp {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* User alignment */
+.message-row.user {
+  flex-direction: row-reverse;
+}
+
+.message-row.user .avatar {
+  margin-left: 12px;
+  margin-right: 0;
+}
+
+.message-row.user .bubble-group {
+  align-items: flex-end;
+}
+
+/* ========== INPUT AREA ========== */
+.chat-input {
+  padding: 20px 32px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.attach-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.attach-btn:hover {
+  background: #f3f4f6;
+}
+
+.attach-icon {
+  width: 20px;
+  opacity: 0.6;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 24px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+}
+
+.chat-input button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #ff6b35;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ========== IMAGE BUBBLE ========== */
+.image-bubble {
+  padding: 6px;
+  background: #ff7a33;
+}
+
+.chat-image {
+  width: 220px;
+  border-radius: 12px;
+}
+
+/* ========== CALENDAR (CHAT INLINE) ========== */
+.chat-calendar {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.calendar-btn {
+  margin-top: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #ff7a18;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.calendar-btn:hover {
+  background: #e86c12;
+}
+
+/* ========== APPROVAL BUTTON ========== */
+.approval-btn {
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: none;
+  background: #ff7a18;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.approval-btn:hover {
+  background: #e86c12;
+}
+
+/* ========== SCROLLBAR ========== */
+.chat-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}

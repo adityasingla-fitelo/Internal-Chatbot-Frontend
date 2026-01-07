@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fitelo | Internal Support</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Fitelo | Internal Support Chat</title>
+
+  <!-- Chat styles -->
+  <link rel="stylesheet" href="/css/chat.css" />
 </head>
+
 <body>
 
 <div class="app-container">
   <main class="chat-wrapper">
+
     <!-- Header -->
     <div class="chat-header">
       <div class="header-left">
@@ -26,8 +30,10 @@
       <div class="message-row system">
         <div class="avatar ai">AI</div>
         <div class="bubble-group">
-          <div class="message system">Hello! I'm your Fitelo Internal Support Assistant.
-            How can I help you today?</div>
+          <div class="message system">
+            Hello! I'm your Fitelo Internal Support Assistant.
+            How can I help you today?
+          </div>
           <div class="timestamp">10:00 AM</div>
         </div>
       </div>
@@ -35,9 +41,10 @@
 
     <!-- Input area -->
     <div class="chat-input">
-      <!-- Attachment button -->
-      <label class="attach-btn" title="Attach screenshot">
-        <img src="/attach-icon.png" alt="Attach" class="attach-icon" />
+
+      <!-- Attachment -->
+      <label class="attach-btn">
+        <img src="/attach-icon.png" class="attach-icon" />
         <input type="file" id="fileInput" accept="image/*" hidden />
       </label>
 
@@ -48,15 +55,13 @@
         onkeydown="handleEnter(event)"
       />
 
-      <!-- Send button -->
+      <!-- Send -->
       <button onclick="sendMessage()">➤</button>
     </div>
 
-    <!-- File preview -->
-    <div class="file-preview" id="filePreview"></div>
   </main>
 </div>
 
-<script src="script.js"></script>
+<script src="/js/chat.js"></script>
 </body>
 </html>

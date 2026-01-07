@@ -1,0 +1,125 @@
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #f6f7fb;
+  color: #1f2937;
+}
+
+/* ===== TOP NAVBAR ===== */
+.topbar {
+  height: 64px;
+  background: linear-gradient(90deg, #4b2aad, #ff7a18);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.topbar .avatar {
+  margin-left: auto;
+  background: rgba(255,255,255,0.25);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* ===== PAGE CONTAINER ===== */
+.container {
+  padding: 24px;
+}
+
+h2 {
+  margin-bottom: 16px;
+}
+
+/* ===== TABLE ===== */
+.table-wrapper {
+  background: white;
+  border-radius: 10px;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: #f3f4f6;
+}
+
+th,
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  font-weight: 600;
+  color: #374151;
+}
+
+.notes {
+  max-width: 260px;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+/* ===== STATUS PILLS ===== */
+.status {
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.pending {
+  background: #fff4cc;
+  color: #b45309;
+}
+
+.approved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ===== ACTION DROPDOWN ===== */
+select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.topbar {
+  height: 64px;
+  background: linear-gradient(90deg, #4b2aad, #ff7a18);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+}
+
+.topbar .logo {
+  height: 60px;
+}
+
