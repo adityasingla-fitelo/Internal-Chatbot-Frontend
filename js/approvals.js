@@ -1,5 +1,11 @@
-const API_URL = "https://internal-chatbot-backend.onrender.com/approvals";
-const UPDATE_URL = "https://internal-chatbot-backend.onrender.com/approvals/update";
+const BASE_API_URL =
+  window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://internal-chatbot-backend-1.onrender.com";
+
+const API_URL = `${BASE_API_URL}/approvals`;
+const UPDATE_URL = `${BASE_API_URL}/approvals/update`;
+
 
 async function fetchApprovals() {
   const res = await fetch(API_URL);
@@ -14,12 +20,10 @@ async function renderApprovals() {
   approvals.forEach(item => {
     let requestTypeText = item.request_type;
 
-    // 🔥 Add Pause Days formatting
     if (item.request_type === "Add Pause Days") {
       requestTypeText = `${item.request_type} : ${item.pause_days_requested} Days`;
     }
 
-    // 🔥 Transfer Plan formatting
     if (item.request_type === "Transfer Plan") {
       requestTypeText = `${item.request_type} : ${item.requested_plan}`;
     }
@@ -34,7 +38,7 @@ async function renderApprovals() {
       <td>
         <span class="status ${item.status.toLowerCase()}">${item.status}</span>
       </td>
-      <td class="notes">${item.reason}</td>
+      <td>${item.reason}</td>
       <td>
         <select onchange="handleAction(${item.id}, this.value)">
           <option value="">Select</option>
